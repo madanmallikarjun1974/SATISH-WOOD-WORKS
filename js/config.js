@@ -7,7 +7,7 @@ window.SWW = {
   established: 2017,
   manager: 'Mr. Srinivas',
 
-  // ➜ ADD THE SHOP PHONE NUMBER HERE (10 digits, no spaces). Call + WhatsApp buttons switch on automatically.
+  // ➜ PUT THE SHOP WHATSAPP NUMBER HERE (10 digits, no spaces). Enquiries are then sent to this WhatsApp number, and the Call + WhatsApp buttons switch on.
   phone: '',
   email: '',
 

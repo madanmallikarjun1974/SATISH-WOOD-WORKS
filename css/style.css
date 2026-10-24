@@ -370,3 +370,6 @@ body.lb-open{overflow:hidden}
   .rv-rows{overflow-x:auto}
   .card{animation:none}
 }
+
+.wa-hint{margin-top:12px;font-size:.88rem;text-align:center;color:var(--muted,#b9a58d)}
+.wa-hint[hidden]{display:none}

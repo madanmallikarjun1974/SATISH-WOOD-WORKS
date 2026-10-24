@@ -271,18 +271,38 @@
     var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Satish-Wood-Works-enquiry.xlsx'; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
   }
   var lastRec = null;
+  var ownerPhone = String(CFG.phone || '').replace(/\D/g, '').replace(/^91(?=\d{10}$)/, '');
+  var WA_MODE = ownerPhone.length === 10;
+  function waText(o) {
+    var L = ['*New enquiry - Satish Wood Works website*', ''];
+    function add(k, v) { if (v) L.push('*' + k + ':* ' + v); }
+    add('Name', o.name); add('Mobile', '+91 ' + cleanPhone(o.phone)); add('Email', o.email); add('Area / location', o.area);
+    add('Property', o.propertyType); add('Looking for', o.interests.join(', ')); add('Style', o.style); add('Timeline', o.timeline);
+    add('Best time to call', o.callTime); add('Design liked', o.design);
+    if (o.details) { L.push(''); L.push('*Details:*'); L.push(o.details); }
+    return L.join('\n');
+  }
+  function waUrl(o) { return 'https://wa.me/91' + ownerPhone + '?text=' + encodeURIComponent(waText(o)); }
+  if (WA_MODE) { var hint = $('#wa-hint'); if (hint) hint.hidden = false; }
   form.addEventListener('submit', function (e) {
     e.preventDefault(); err.hidden = true;
     var o = collect(), bad = validate(o);
     if (bad.length) { err.textContent = 'Please check ' + bad.join(', ') + '.'; err.hidden = false; var f = $('.bad', form); if (f) f.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
     var btn = $('#f-submit'); btn.disabled = true; $('span', btn).textContent = 'Sending…';
     var digits = cleanPhone(o.phone), payload = Object.assign({}, o, { phone: digits });
+    var waLink = WA_MODE ? waUrl(o) : '';
+    if (WA_MODE) { try { window.open(waLink, '_blank', 'noopener'); } catch (x) {} }
     var done = function (ref, offline) {
       lastRec = { ref: ref, receivedAt: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST', name: o.name, phone: '+91 ' + digits.slice(0, 5) + ' ' + digits.slice(5), email: o.email, area: o.area, propertyType: o.propertyType, interests: o.interests.join(', '), style: o.style, timeline: o.timeline, callTime: o.callTime, details: o.details, design: o.design, status: 'New' };
       $('#thanks-name').textContent = o.name ? ', ' + o.name.split(' ')[0] : '';
       $('#thanks-ref').textContent = ref; $('#thanks-phone').textContent = lastRec.phone;
       $('#thanks-note').textContent = offline ? 'We couldn’t reach our server just now. Your enquiry is saved on this device and will be sent automatically as soon as you are back online.' : (openStatus().state === 'closed' ? 'The showroom is closed right now — we’ll get back to you when we open.' : 'Our team will call you shortly.');
-      $('#thanks-xlsx').hidden = !offline;
+      var waBtn = $('#thanks-wa');
+      if (WA_MODE) {
+        $('#thanks-std').hidden = true; $('#thanks-wamsg').hidden = false;
+        $('#thanks-note').textContent = 'WhatsApp didn’t open? Tap the green button below.';
+        waBtn.href = waLink; waBtn.hidden = false; $('#thanks-xlsx').hidden = true;
+      } else { waBtn.hidden = true; $('#thanks-std').hidden = false; $('#thanks-wamsg').hidden = true; $('#thanks-xlsx').hidden = !offline; }
       grp.classList.add('sent'); thanks.hidden = false; thanks.scrollIntoView({ block: 'center', behavior: 'smooth' });
       form.reset(); design.value = ''; liked.hidden = true; btn.disabled = false; $('span', btn).textContent = 'Send Enquiry';
     };
@@ -290,7 +310,7 @@
       if (r.body && r.body.ok) return done(r.body.ref, false);
       if (r.status === 422 || r.status === 429) { err.textContent = r.body.error || 'Please check the form and try again.'; err.hidden = false; btn.disabled = false; $('span', btn).textContent = 'Send Enquiry'; return; }
       throw new Error('server');
-    }).catch(function () { var q = queue(); q.push(payload); queue(null, q); done('PENDING', true); });
+    }).catch(function () { if (WA_MODE) return done('WA', false); var q = queue(); q.push(payload); queue(null, q); done('PENDING', true); });
   });
   $('#thanks-xlsx').addEventListener('click', function () { if (lastRec) downloadXlsx(lastRec); });
   function resetSent() { grp.classList.remove('sent'); thanks.hidden = true; }
