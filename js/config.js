@@ -7,9 +7,10 @@ window.SWW = {
   established: 2017,
   manager: 'Mr. Srinivas',
 
-  // ➜ PUT THE SHOP WHATSAPP NUMBER HERE (10 digits, no spaces). Enquiries are then sent to this WhatsApp number, and the Call + WhatsApp buttons switch on.
+  // ➜ PUT THE SHOP WHATSAPP NUMBER HERE (10 digits, no spaces). The Call + WhatsApp buttons switch on, and customers get a one-tap "Message us on WhatsApp" option after sending an enquiry.
   phone: '',
-  email: '',
+  // Enquiries from the website form are e-mailed to this address.
+  email: 'satishinteriorworld@gmail.com',
 
   address: {
     line1: '#456 / #52, 1st Cross, Narayanaswamy Layout',

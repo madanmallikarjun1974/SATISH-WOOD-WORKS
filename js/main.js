@@ -257,10 +257,31 @@
       return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, body: j }; });
     });
   }
+  function sendEmail(p) {
+    var to = String(CFG.email || '').trim(); if (!to) return Promise.resolve(false);
+    var b = { _subject: 'New enquiry - ' + p.name + (p.interests && p.interests.length ? ' (' + p.interests.join(', ') + ')' : ''), _template: 'table', _captcha: 'false', _honey: '' };
+    function add(k, v) { if (v) b[k] = v; }
+    add('Reference', p.clientRef); add('Name', p.name); add('Mobile', '+91 ' + p.phone); add('Area / location', p.area); add('Property', p.propertyType);
+    add('Looking for', (p.interests || []).join(', ')); add('Style', p.style); add('Timeline', p.timeline); add('Best time to call', p.callTime);
+    add('Design liked', p.design); add('Details', p.details); add('Received', new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST');
+    if (p.email) b.email = p.email;
+    return fetch('https://formsubmit.co/ajax/' + encodeURIComponent(to), { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(b) })
+      .then(function (r) { return r.json(); }).then(function (j) { return !!j && (j.success === true || j.success === 'true'); }).catch(function () { return false; });
+  }
+  /* deliver = e-mail to the shop + (when running start-server.bat) the Excel file. Success if either worked. */
+  function deliver(p) {
+    var srv = location.protocol === 'file:' ? Promise.resolve({ ok: false }) : post(p).then(function (r) {
+      return { ok: !!(r.body && r.body.ok), ref: r.body && r.body.ref, invalid: r.status === 422 || r.status === 429, error: r.body && r.body.error };
+    }).catch(function () { return { ok: false }; });
+    return Promise.all([srv, sendEmail(p)]).then(function (a) {
+      if (a[0].invalid && !a[1]) return { invalid: true, error: a[0].error };
+      return { ok: a[0].ok || a[1], ref: a[0].ref || p.clientRef };
+    });
+  }
   function flush() {
-    var q = queue(); if (!q.length || location.protocol === 'file:') return;
+    var q = queue(); if (!q.length) return;
     var left = []; var chain = Promise.resolve();
-    q.forEach(function (p) { chain = chain.then(function () { return post(p).then(function (r) { if (r.status >= 500 || !r.body.ok && r.status !== 422) left.push(p); }); }).catch(function () { left.push(p); }); });
+    q.forEach(function (p) { chain = chain.then(function () { return deliver(p).then(function (r) { if (!r.ok && !r.invalid) left.push(p); }); }).catch(function () { left.push(p); }); });
     chain.then(function () { queue(null, left); });
   }
   window.addEventListener('online', flush); flush();
@@ -283,7 +304,6 @@
     return L.join('\n');
   }
   function waUrl(o) { return 'https://wa.me/91' + ownerPhone + '?text=' + encodeURIComponent(waText(o)); }
-  if (WA_MODE) { var hint = $('#wa-hint'); if (hint) hint.hidden = false; }
   form.addEventListener('submit', function (e) {
     e.preventDefault(); err.hidden = true;
     var o = collect(), bad = validate(o);
@@ -291,26 +311,24 @@
     var btn = $('#f-submit'); btn.disabled = true; $('span', btn).textContent = 'Sending…';
     var digits = cleanPhone(o.phone), payload = Object.assign({}, o, { phone: digits });
     var waLink = WA_MODE ? waUrl(o) : '';
-    if (WA_MODE) { try { window.open(waLink, '_blank', 'noopener'); } catch (x) {} }
     var done = function (ref, offline) {
       lastRec = { ref: ref, receivedAt: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST', name: o.name, phone: '+91 ' + digits.slice(0, 5) + ' ' + digits.slice(5), email: o.email, area: o.area, propertyType: o.propertyType, interests: o.interests.join(', '), style: o.style, timeline: o.timeline, callTime: o.callTime, details: o.details, design: o.design, status: 'New' };
       $('#thanks-name').textContent = o.name ? ', ' + o.name.split(' ')[0] : '';
       $('#thanks-ref').textContent = ref; $('#thanks-phone').textContent = lastRec.phone;
-      $('#thanks-note').textContent = offline ? 'We couldn’t reach our server just now. Your enquiry is saved on this device and will be sent automatically as soon as you are back online.' : (openStatus().state === 'closed' ? 'The showroom is closed right now — we’ll get back to you when we open.' : 'Our team will call you shortly.');
+      $('#thanks-note').textContent = offline ? 'We couldn’t send it just now. Your enquiry is saved on this device and will be sent automatically as soon as you are back online.' : (openStatus().state === 'closed' ? 'The showroom is closed right now — we’ll get back to you when we open.' : 'Our team will call you shortly.');
       var waBtn = $('#thanks-wa');
-      if (WA_MODE) {
-        $('#thanks-std').hidden = true; $('#thanks-wamsg').hidden = false;
-        $('#thanks-note').textContent = 'WhatsApp didn’t open? Tap the green button below.';
-        waBtn.href = waLink; waBtn.hidden = false; $('#thanks-xlsx').hidden = true;
-      } else { waBtn.hidden = true; $('#thanks-std').hidden = false; $('#thanks-wamsg').hidden = true; $('#thanks-xlsx').hidden = !offline; }
+      if (WA_MODE && !offline) { waBtn.href = waLink; waBtn.hidden = false; } else { waBtn.hidden = true; }
+      $('#thanks-xlsx').hidden = !offline;
       grp.classList.add('sent'); thanks.hidden = false; thanks.scrollIntoView({ block: 'center', behavior: 'smooth' });
       form.reset(); design.value = ''; liked.hidden = true; btn.disabled = false; $('span', btn).textContent = 'Send Enquiry';
     };
-    post(payload).then(function (r) {
-      if (r.body && r.body.ok) return done(r.body.ref, false);
-      if (r.status === 422 || r.status === 429) { err.textContent = r.body.error || 'Please check the form and try again.'; err.hidden = false; btn.disabled = false; $('span', btn).textContent = 'Send Enquiry'; return; }
-      throw new Error('server');
-    }).catch(function () { if (WA_MODE) return done('WA', false); var q = queue(); q.push(payload); queue(null, q); done('PENDING', true); });
+    payload.clientRef = 'SWW-' + Date.now().toString(36).toUpperCase().slice(-6);
+    if (o.website) return done(payload.clientRef, false); /* honeypot: bots get a fake success */
+    deliver(payload).then(function (r) {
+      if (r.ok) return done(r.ref, false);
+      if (r.invalid) { err.textContent = r.error || 'Please check the form and try again.'; err.hidden = false; btn.disabled = false; $('span', btn).textContent = 'Send Enquiry'; return; }
+      var q = queue(); q.push(payload); queue(null, q); done('PENDING', true);
+    }).catch(function () { var q = queue(); q.push(payload); queue(null, q); done('PENDING', true); });
   });
   $('#thanks-xlsx').addEventListener('click', function () { if (lastRec) downloadXlsx(lastRec); });
   function resetSent() { grp.classList.remove('sent'); thanks.hidden = true; }
