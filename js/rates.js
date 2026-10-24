@@ -112,32 +112,6 @@ window.SWW_RATES = {
         { id: 'led', name: { en: 'LED backlight', kn: 'ಎಲ್ಇಡಿ ಬ್ಯಾಕ್‌ಲೈಟ್' }, type: 'sqft', rate: 100 },
         { id: 'jaali', name: { en: 'Jaali doors', kn: 'ಜಾಲಿ ಬಾಗಿಲು' }, type: 'sqft', rate: 200 }
       ]
-    },
-    {
-      id: 'iron', name: { en: 'Iron Gates & Grills', kn: 'ಕಬ್ಬಿಣದ ಗೇಟ್ ಮತ್ತು ಗ್ರಿಲ್' },
-      d1: { en: 'Width', kn: 'ಅಗಲ', def: 10 }, d2: { en: 'Height', kn: 'ಎತ್ತರ', def: 5 },
-      materials: [
-        { id: 'grill', name: { en: 'MS grill (plain)', kn: 'ಎಂಎಸ್ ಗ್ರಿಲ್ (ಸಾದಾ)' }, rate: 380 },
-        { id: 'gate', name: { en: 'MS designer gate', kn: 'ಎಂಎಸ್ ಡಿಸೈನರ್ ಗೇಟ್' }, rate: 520 },
-        { id: 'ss', name: { en: 'Stainless steel', kn: 'ಸ್ಟೇನ್‌ಲೆಸ್ ಸ್ಟೀಲ್' }, rate: 1200 }
-      ],
-      addons: [
-        { id: 'powder', name: { en: 'Powder coating', kn: 'ಪೌಡರ್ ಕೋಟಿಂಗ್' }, type: 'sqft', rate: 60 },
-        { id: 'roller', name: { en: 'Sliding rollers & track', kn: 'ಸ್ಲೈಡಿಂಗ್ ರೋಲರ್ ಮತ್ತು ಟ್ರ್ಯಾಕ್' }, type: 'flat', rate: 8000 }
-      ]
-    },
-    {
-      id: 'roof', name: { en: 'Rooftop Shed', kn: 'ಮಾಳಿಗೆ (ರೂಫ್‌ಟಾಪ್) ಶೆಡ್' },
-      d1: { en: 'Length', kn: 'ಉದ್ದ', def: 15 }, d2: { en: 'Breadth', kn: 'ಅಗಲ', def: 10 },
-      materials: [
-        { id: 'gi', name: { en: 'GI sheet on MS frame', kn: 'ಎಂಎಸ್ ಫ್ರೇಮ್ ಮೇಲೆ ಜಿಐ ಶೀಟ್' }, rate: 260 },
-        { id: 'poly', name: { en: 'Polycarbonate on MS frame', kn: 'ಎಂಎಸ್ ಫ್ರೇಮ್ ಮೇಲೆ ಪಾಲಿಕಾರ್ಬೊನೇಟ್' }, rate: 420 },
-        { id: 'sand', name: { en: 'Insulated sandwich panel', kn: 'ಇನ್ಸುಲೇಟೆಡ್ ಸ್ಯಾಂಡ್‌ವಿಚ್ ಪ್ಯಾನೆಲ್' }, rate: 480 }
-      ],
-      addons: [
-        { id: 'gutter', name: { en: 'Rain gutter & downpipe', kn: 'ಮಳೆ ನೀರಿನ ಗಟರ್ ಮತ್ತು ಪೈಪ್' }, type: 'sqft', rate: 25 },
-        { id: 'paint', name: { en: 'Anti-rust paint', kn: 'ತುಕ್ಕು ನಿರೋಧಕ ಪೇಂಟ್' }, type: 'sqft', rate: 20 }
-      ]
     }
   ]
 };
