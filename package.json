@@ -1,0 +1,9 @@
+{
+  "name": "satish-wood-works-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Satish Wood Works — scroll-based 3D interiors website with enquiry form that saves to Excel",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=16" }
+}
