@@ -373,3 +373,65 @@ body.lb-open{overflow:hidden}
 
 .wa-hint{margin-top:12px;font-size:.88rem;text-align:center;color:var(--muted,#b9a58d)}
 .wa-hint[hidden]{display:none}
+
+/* ============ INSTANT QUOTE ESTIMATOR ============ */
+.est{background:radial-gradient(1200px 500px at 85% -10%,rgba(217,162,74,.10),transparent 60%),linear-gradient(180deg,#150e09,#120c08);border-top:1px solid var(--line)}
+.est-head{max-width:780px;margin-bottom:clamp(24px,4vw,44px)}
+.est-sub{margin-top:18px;color:#d3c5ad;font-size:1.05rem;max-width:62ch}
+.est-top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.est-lang{display:inline-flex;border:1.5px solid rgba(217,162,74,.35);border-radius:999px;padding:3px;background:rgba(18,12,8,.6)}
+.est-lang button{border:0;background:transparent;color:#d9cbb3;font:700 .86rem var(--sans);padding:8px 18px;border-radius:999px;cursor:pointer;transition:all .2s}
+.est-lang button.on{background:var(--brass);color:#1a110b}
+.est-sample{font-size:.78rem;font-weight:700;letter-spacing:.04em;color:#ffcf8a;background:rgba(217,162,74,.12);border:1px dashed rgba(217,162,74,.5);padding:6px 14px;border-radius:999px}
+.est-sample[hidden]{display:none}
+.est-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:clamp(16px,2.4vw,30px);align-items:start}
+.est-card{padding:clamp(20px,3vw,36px);border-radius:22px;background:linear-gradient(170deg,#241810,#1a110b);border:1px solid var(--line);box-shadow:0 50px 100px -60px #000;display:flex;flex-direction:column;gap:18px}
+.est-quote{position:sticky;top:calc(var(--hdr) + 14px)}
+.est-h{display:flex;align-items:center;gap:12px;font:700 .8rem var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--brass);margin-top:6px}
+.est-h b{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--brass);color:#1a110b;font-size:.82rem;letter-spacing:0}
+.est-root.is-kn .est-h,.est-root.is-kn .fld>span{letter-spacing:.02em;text-transform:none;font-size:.95rem}
+.est-root.is-kn,.est-root.is-kn input,.est-root.is-kn button{font-family:'Noto Sans Kannada','Nirmala UI','Kannada Sangam MN',var(--sans)}
+.est .pills span i{font-style:normal;opacity:.75;font-weight:500;font-size:.82em;margin-left:4px}
+.est .pills input:checked+span i{opacity:.85}
+.est input[type=number]{width:100%}
+.est-live{padding:16px 18px;border-radius:14px;background:rgba(217,162,74,.08);border:1px solid var(--line)}
+.est-live small{display:block;color:var(--muted);font-size:.82rem}
+.est-live b{font:700 1.7rem var(--serif);color:var(--brass2)}
+.est-dim{color:var(--muted);font-size:.92rem}
+.est-qhead{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.est-qt{font:600 1.9rem var(--serif)}
+.est-root.is-kn .est-qt{font:700 1.3rem 'Noto Sans Kannada',var(--sans)}
+.est-clear{border:0;background:none;color:var(--muted);text-decoration:underline;cursor:pointer;font:600 .85rem var(--sans)}
+.est-clear[hidden]{display:none}
+.est-list{display:flex;flex-direction:column;gap:10px;max-height:340px;overflow:auto;padding-right:2px}
+.est-empty{padding:22px;border:1px dashed var(--line);border-radius:14px;color:var(--muted);text-align:center;font-size:.95rem}
+.est-row{display:flex;justify-content:space-between;gap:12px;padding:14px 16px;border-radius:14px;background:rgba(255,255,255,.035);border:1px solid rgba(217,162,74,.14)}
+.est-row-main{display:flex;flex-direction:column;gap:2px;min-width:0}
+.est-row-main b{font-weight:700;font-size:.95rem}
+.est-row-main small{color:var(--muted);font-size:.8rem}
+.est-ex{color:#c9b48f!important}
+.est-row-amt{display:flex;align-items:flex-start;gap:10px;font:700 1.05rem var(--sans);color:var(--brass2);white-space:nowrap}
+.est-x{border:0;background:rgba(255,255,255,.07);color:#e9dcc6;width:24px;height:24px;border-radius:50%;cursor:pointer;line-height:1;font-size:1.1rem}
+.est-x:hover{background:#b5532e}
+.est-gst{margin-top:-4px}
+.est-totals{display:flex;flex-direction:column;gap:8px;padding:16px 18px;border-radius:14px;background:rgba(217,162,74,.07);border:1px solid var(--line)}
+.est-totals[hidden],.est-gst[hidden]{display:none}
+.est-totals div{display:flex;justify-content:space-between;gap:12px;color:#d3c5ad}
+.est-grand{padding-top:10px;border-top:1px solid var(--line);color:var(--ink)!important;font-weight:700}
+.est-grand b{font:700 1.9rem var(--serif);color:var(--brass2)}
+.est-rng{font-size:.88rem}
+.est-ok{padding:12px 16px;border-radius:10px;background:rgba(88,170,110,.14);border:1px solid rgba(88,170,110,.45);color:#b9efc7;font-size:.9rem}
+.est-ok[hidden]{display:none}
+.est-actions{display:flex;flex-wrap:wrap;gap:10px}
+.est-actions .btn{flex:1 1 200px}
+.est-wabtn{background:#25d366;color:#07240f;box-shadow:0 10px 30px -12px rgba(37,211,102,.7)}
+.est-wabtn[hidden],.est-actions .btn[hidden]{display:none}
+.est-note{font-size:.8rem;color:var(--muted);line-height:1.55}
+.est input.bad{border-color:#ff8b78}
+@media (max-width:920px){.est-grid{grid-template-columns:1fr}.est-quote{position:static}}
+
+.est input[type=number]{width:100%;padding:14px 16px;border-radius:12px;background:rgba(10,6,3,.55);border:1.5px solid rgba(217,162,74,.2);color:var(--ink);font:inherit}
+.est input[type=number]:focus{outline:none;border-color:var(--brass2);box-shadow:0 0 0 4px rgba(242,197,119,.12)}
+
+html[data-est-lang=kn] .est-head .h-xl{font-family:'Noto Sans Kannada','Nirmala UI','Kannada Sangam MN',var(--serif);font-weight:700;line-height:1.3;font-size:clamp(2rem,4.4vw,3.4rem)}
+html[data-est-lang=kn] .est-head .h-xl em{font-style:normal}

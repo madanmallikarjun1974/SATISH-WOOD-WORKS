@@ -27,3 +27,11 @@ only "save to Excel on the server" needs start-server.bat.
 PHOTOS
 Gallery photos are in assets\thumb and assets\full (WebP, watermark-free).
 To add a new design, add its photos and a line in js\catalog.js.
+
+INSTANT QUOTE ESTIMATOR  (English + Kannada)
+- Section "Instant Quote" on the site: customer picks an item, size and material and sees an approximate price at once,
+  builds a multi-item quote, then downloads a PDF, sends it on WhatsApp, or books a free site visit.
+- Every quote request is e-mailed to the shop as a lead (address in js\config.js -> email).
+- PRICES:  edit js\rates.js  (rupees per sq ft). The rates in the file are SAMPLE rates:
+  put the shop's real rates in, then set  sample: false  to hide the "sample rates" badge.
+- WhatsApp button appears when the shop's 10-digit number is set in js\config.js -> phone.

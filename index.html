@@ -12,7 +12,7 @@
 <meta property="og:image" content="assets/full/living-m2-a.webp">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+Kannada:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"FurnitureStore","name":"Satish Wood Works","description":"Manufacturer, wholesaler and trader of interior woodwork and furniture in Bengaluru.","foundingDate":"2017","address":{"@type":"PostalAddress","streetAddress":"#456 / #52, 1st Cross, Narayanaswamy Layout, Abbigere","addressLocality":"Bengaluru","addressRegion":"Karnataka","postalCode":"560090","addressCountry":"IN"},"hasMap":"https://maps.app.goo.gl/VZY8yzGxyXu1Qmnt9","openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"opens":"09:00","closes":"19:30"}]}
@@ -31,6 +31,7 @@
     <a href="#compare">Heritage vs Modern</a>
     <a href="#collections">Designs</a>
     <a href="#services">What we make</a>
+    <a href="#estimator">Instant Quote</a>
     <a href="#reviews">Reviews</a>
     <a href="#visit">Visit</a>
   </nav>
@@ -41,7 +42,7 @@
   </div>
 </header>
 <div class="mobile-menu" hidden>
-  <a href="#compare">Heritage vs Modern</a><a href="#collections">Designs</a><a href="#services">What we make</a><a href="#reviews">Reviews</a><a href="#visit">Visit us</a><a href="#enquire" class="btn btn-brass">Enquire Now</a>
+  <a href="#compare">Heritage vs Modern</a><a href="#collections">Designs</a><a href="#services">What we make</a><a href="#estimator">Instant Quote</a><a href="#reviews">Reviews</a><a href="#visit">Visit us</a><a href="#enquire" class="btn btn-brass">Enquire Now</a>
 </div>
 
 <main id="main">
@@ -196,6 +197,18 @@
 </section>
 
 <!-- ============ PROCESS ============ -->
+<!-- ============ INSTANT QUOTE ESTIMATOR ============ -->
+<section class="est section" id="estimator">
+  <div class="wrap">
+    <div class="est-head reveal">
+      <p class="eyebrow" id="est-eyebrow">Instant price estimator</p>
+      <h2 class="h-xl"><span id="est-h2a">Get your quote</span> <em id="est-h2b">in 30 seconds.</em></h2>
+      <p class="est-sub" id="est-sub">Pick what you need, enter the size and material — your approximate quote appears instantly. Download it as a PDF or send it to us on WhatsApp.</p>
+    </div>
+    <div id="est-root" class="est-root"></div>
+  </div>
+</section>
+
 <section class="process section dark-2" id="process">
   <div class="wrap">
     <div class="sec-head reveal"><div><p class="eyebrow">How it works</p><h2 class="h-xl">From idea to <em>installed.</em></h2></div></div>
@@ -291,7 +304,7 @@
 <footer class="site-footer">
   <div class="wrap foot">
     <div><b class="foot-brand">Satish Wood Works</b><p>Manufacturer · Wholesaler · Trader<br>Interior woodworks, Abbigere, Bengaluru</p></div>
-    <div><b>Explore</b><a href="#compare">Heritage vs Modern</a><a href="#collections">Designs</a><a href="#services">What we make</a><a href="#reviews">Reviews</a></div>
+    <div><b>Explore</b><a href="#compare">Heritage vs Modern</a><a href="#collections">Designs</a><a href="#services">What we make</a><a href="#estimator">Instant Quote</a><a href="#reviews">Reviews</a></div>
     <div><b>Visit</b><p>#456 / #52, 1st Cross,<br>Narayanaswamy Layout, Abbigere,<br>Bengaluru 560090</p><p>Mon–Sat · 9:00 AM – 7:30 PM<br>Sunday closed</p></div>
   </div>
   <p class="copy">© <span id="yr">2026</span> Satish Wood Works. All rights reserved.</p>
@@ -327,5 +340,7 @@
 <script src="js/hero-data.js"></script>
 <script src="js/hero3d.js"></script>
 <script src="js/main.js"></script>
+<script src="js/rates.js"></script>
+<script src="js/estimator.js"></script>
 </body>
 </html>
