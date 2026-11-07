@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Owner Dashboard — Satish Interior World</title>
+<meta name="theme-color" content="#120c08">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/owner.css">
+</head>
+<body class="own">
+
+<!-- ============ LOGIN ============ -->
+<main class="ologin" id="login">
+  <form class="ologin-card" id="login-form" autocomplete="off">
+    <svg viewBox="0 0 64 64" width="46" height="46" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1a110b" stroke="#d9a24a" stroke-opacity=".5"/><g fill="none" stroke="#d9a24a" stroke-width="3.4" stroke-linecap="round"><path d="M18 20h28M18 32h28M18 44h28"/><path d="M26 14v36M38 14v36" stroke-width="2" opacity=".55"/></g></svg>
+    <p class="eyebrow">Owner area</p>
+    <h1>Satish Interior World</h1>
+    <p class="ologin-sub">Enter the owner password to see your customers, enquiries, quotations and reviews.</p>
+    <label class="fld"><span>Password</span><input type="password" id="pw" autocomplete="current-password" required autofocus></label>
+    <p class="form-err" id="login-err" role="alert" hidden></p>
+    <button class="btn btn-brass btn-lg" type="submit" id="login-go"><span>Open dashboard</span></button>
+    <p class="ologin-mode" id="login-mode"></p>
+    <a class="ologin-back" href="owner-guide">First time? Open the setup guide →</a>
+    <a class="ologin-back" href="index.html">← Back to the website</a>
+  </form>
+</main>
+
+<!-- ============ DASHBOARD ============ -->
+<div class="odash" id="dash" hidden>
+  <header class="obar">
+    <div class="obar-l"><svg viewBox="0 0 64 64" width="34" height="34" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1a110b" stroke="#d9a24a" stroke-opacity=".5"/><g fill="none" stroke="#d9a24a" stroke-width="3.4" stroke-linecap="round"><path d="M18 20h28M18 32h28M18 44h28"/><path d="M26 14v36M38 14v36" stroke-width="2" opacity=".55"/></g></svg><div><b>Owner dashboard</b><small>Satish Interior World</small></div></div>
+    <div class="obar-r"><a class="btn btn-ghost btn-sm" href="index.html">← Website</a><span class="ostamp" id="stamp"></span><button class="btn btn-ghost btn-sm" id="b-refresh" type="button">↻ Refresh</button><button class="btn btn-brass btn-sm" id="b-xlsx" type="button">⬇ Download Excel</button><button class="btn btn-ghost btn-sm" id="b-out" type="button">Log out</button></div>
+  </header>
+
+  <div class="obanner" id="banner" hidden></div>
+
+  <section class="owrap">
+    <div class="orange" role="group" aria-label="Date range" id="range">
+      <button type="button" data-r="1">Today</button><button type="button" data-r="7">Last 7 days</button><button type="button" data-r="30" class="on">Last 30 days</button><button type="button" data-r="all">All time</button>
+    </div>
+
+    <div class="okpis" id="kpis"></div>
+
+    <details class="ocard osave" id="osave" open>
+      <summary><span>ⓘ How is my data saved?</span><em id="osave-state"></em></summary>
+      <ol class="osave-flow">
+        <li><b>1 · Customer fills a form</b><span>Entry form, detailed enquiry, price estimator or a review — on any phone or computer.</span></li>
+        <li><b>2 · It is saved in 3 places at once</b><span><u>E-mail</u> to the shop's inbox · <u>Google Sheet</u> (one new row — the master list this dashboard reads) · a backup copy in the customer's own browser, re-sent automatically if the internet drops.</span></li>
+        <li><b>3 · You see it here</b><span>Open this page with your password — every customer, grouped by phone number, refreshed every minute. <u>Download Excel</u> any time for your own file.</span></li>
+      </ol>
+      <p class="osave-note" id="osave-note"></p>
+    </details>
+
+    <div class="ocard ochart"><div class="ocard-h"><h2>Last 14 days</h2><ul class="olegend"><li><i class="c-reg"></i>Visitors</li><li><i class="c-quo"></i>Quotations</li><li><i class="c-enq"></i>Detailed enquiries</li></ul></div><div id="chart"></div></div>
+
+    <div class="ocard" id="rvcard">
+      <div class="ocard-h"><h2>Customer reviews</h2><div class="ochips" id="rv-chips"></div></div>
+      <p class="rv-help">Customers write reviews on the website. A review is <b>not shown</b> to the public until you press <b>Approve</b>.</p>
+      <div id="rv-list"></div>
+    </div>
+
+    <div class="ocard" id="custcard">
+      <div class="ocard-h otools">
+        <div class="oview" role="tablist" aria-label="View"><button type="button" data-v="cust" class="on" role="tab">Customers</button><button type="button" data-v="act" role="tab">All activity</button></div>
+        <div class="ochips" id="chips"></div>
+        <label class="osearch"><span class="sr">Search</span><input type="search" id="q" placeholder="Search name, phone, area…"></label>
+      </div>
+      <div class="otable" id="table"></div>
+    </div>
+  </section>
+</div>
+
+<!-- detail drawer -->
+<aside class="odrawer" id="drawer" hidden aria-label="Customer details"><div class="odrawer-in" id="drawer-in"></div></aside>
+<div class="oscrim" id="scrim" hidden></div>
+
+<script src="js/config.js"></script>
+<script src="js/schema.js"></script>
+<script src="js/xlsx-lite.js"></script>
+<script src="js/leads.js"></script>
+<script src="js/owner.js"></script>
+</body>
+</html>

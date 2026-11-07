@@ -1,37 +1,34 @@
-SATISH WOOD WORKS - WEBSITE
-===========================
+SATISH INTERIOR WORLD - WEBSITE
+===============================
 
-HOW TO RUN (Windows)
-1. Install Node.js (free, https://nodejs.org) - one time only.
-2. Double-click  start-server.bat
-3. The site opens at http://localhost:3000
+WHAT IS IN THIS WEBSITE
+- Entry form: first-time visitors fill name + mobile (+ what they need) once, then the site opens (English / Kannada).
+- 3D scroll showroom, design gallery, Heritage-vs-Modern slider.
+- "Our materials": Plywood (Commercial, BWR, BWP, Marine), Solid wood (Teak, Neem, Honne, Mahogany, Acacia, Red Sal,
+  Rosewood), Laminated work, Veneer, MDF / HDHMR / HDF, Finishes & fittings - plus a job guide, comparison table and FAQ.
+  (Edit the words in js\materials.js.)
+- Instant Quote estimator (English / Kannada) with PDF quote + WhatsApp button (rates in js\rates.js).
+- Detailed enquiry form, live open/closed status, map, call + WhatsApp buttons.
+- Owner dashboard: owner.html (password protected) - see OWNER-SETUP.txt.
 
-CUSTOMER ENQUIRIES -> EXCEL
-Every enquiry submitted on the website is saved in:
-    data\enquiries.xlsx      (open with Excel)
-    data\enquiries.json      (backup copy)
-Each enquiry gets a reference like SWW-0001.
-If the server is not running, the visitor's enquiry is kept in their browser
-and they can download it as an Excel file and send it on WhatsApp.
+WHERE EVERY LEAD GOES
+  1. E-mail to satishinteriorworld@gmail.com  - [NEW VISITOR] / [DETAILED ENQUIRY] / [QUOTATION]
+  2. Google Sheet + owner.html dashboard       - after the one-time setup in OWNER-SETUP.txt
+  3. data\leads.xlsx                           - only when you run start-server.bat on your own PC
 
 EDIT YOUR DETAILS  (js\config.js)
-- phone         : put your 10-digit mobile number (turns on Call / WhatsApp buttons)
-- hours         : opening times (Sunday closed, Mon-Sat 9:00 AM - 7:30 PM)
-- testimonials  : replace the SAMPLE reviews with real customer reviews,
-                  then set showSampleBadge to false.
+- phone / email / address / hours / map link
+- sheetUrl : the Google Apps Script link for the owner dashboard (see OWNER-SETUP.txt)
+- reviews      : customers write reviews on the site; you approve them in owner.html (Customer reviews). You may also add real ones by hand in config.js (reviews: [...])
+- previewMode : keep false on the live website (true = demo mode, nothing is sent)
 
-OPEN WITHOUT SERVER
-index.html also opens directly by double-click (hero 3D and gallery work);
-only "save to Excel on the server" needs start-server.bat.
+HOW TO RUN ON A PC (Windows, optional)
+1. Install Node.js (free, https://nodejs.org) once.
+2. Double-click start-server.bat   ->   http://localhost:3000   (owner page: /owner.html)
+
+GOING LIVE ON NETLIFY
+Drag the website ZIP onto https://app.netlify.com/drop  (or connect the GitHub repo). No build step.
 
 PHOTOS
-Gallery photos are in assets\thumb and assets\full (WebP, watermark-free).
-To add a new design, add its photos and a line in js\catalog.js.
-
-INSTANT QUOTE ESTIMATOR  (English + Kannada)
-- Section "Instant Quote" on the site: customer picks an item, size and material and sees an approximate price at once,
-  builds a multi-item quote, then downloads a PDF, sends it on WhatsApp, or books a free site visit.
-- Every quote request is e-mailed to the shop as a lead (address in js\config.js -> email).
-- PRICES:  edit js\rates.js  (rupees per sq ft). The rates in the file are SAMPLE rates:
-  put the shop's real rates in, then set  sample: false  to hide the "sample rates" badge.
-- WhatsApp button appears when the shop's 10-digit number is set in js\config.js -> phone.
+Gallery photos are in assets\thumb and assets\full. Material texture samples are in assets\mat.
+To add a design, add its photos and a line in js\catalog.js.

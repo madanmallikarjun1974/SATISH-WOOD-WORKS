@@ -23,7 +23,7 @@
       q_title: 'QUOTATION', q_no: 'Quote no.', q_date: 'Date', q_valid: 'Valid till', q_for: 'Prepared for', q_item: 'Item', q_size: 'Size', q_area: 'Area (sq ft)', q_rate: 'Rate/sq ft', q_amt: 'Amount',
       q_sub: 'Subtotal', q_gst: 'GST', q_total: 'Approximate total', q_range: 'Estimated range', q_terms: 'Terms', q_page: 'Page',
       q_t: ['1. Approximate estimate based on standard rates and the sizes entered.', '2. Final price is confirmed after a site visit and exact measurements.', '3. Price may vary with design, hardware brand and site conditions.', '4. This quote is valid for 7 days from the date above.'],
-      q_sampleNote: 'SAMPLE RATES — for demonstration only', wa_intro: 'New quote request from the website estimator', wa_hi: 'Hello Satish Wood Works, I would like to proceed with this estimate:'
+      q_sampleNote: 'SAMPLE RATES — for demonstration only', wa_intro: 'New quote request from the website estimator', wa_hi: 'Hello Satish Interior World, I would like to proceed with this estimate:'
     },
     kn: {
       eyebrow: 'ತ್ವರಿತ ಬೆಲೆ ಅಂದಾಜು', h2a: 'ನಿಮ್ಮ ಅಂದಾಜು ಪಟ್ಟಿ', h2b: '30 ಸೆಕೆಂಡ್‌ಗಳಲ್ಲಿ.', sub: 'ಬೇಕಾದ ಕೆಲಸ ಆರಿಸಿ, ಗಾತ್ರ ಮತ್ತು ವಸ್ತು ಆಯ್ಕೆ ಮಾಡಿ — ಅಂದಾಜು ಬೆಲೆ ತಕ್ಷಣ ಕಾಣುತ್ತದೆ. PDF ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ ಅಥವಾ ವಾಟ್ಸ್‌ಆ್ಯಪ್‌ನಲ್ಲಿ ನಮಗೆ ಕಳುಹಿಸಿ.',
@@ -130,7 +130,16 @@
   try { canShareFiles = !!(navigator.canShare && navigator.canShare({ files: [new File(['x'], 'x.pdf', { type: 'application/pdf' })] })); } catch (e) {}
   if (canShareFiles) $('#est-share').hidden = false;
   $('#est-gstp').textContent = R.gstPercent;
+  (function useProfile() {
+    var pr = window.SWW_LEADS && window.SWW_LEADS.profile(); if (!pr) return;
+    if (!st.name && pr.name) st.name = pr.name; if (!st.phone && pr.phone) st.phone = pr.phone;
+    var saved = false; try { saved = !!localStorage.getItem(LS); } catch (e) {} if (!saved && pr.lang === 'kn') st.lang = 'kn';
+  })();
   $('#est-name').value = st.name; $('#est-phone').value = st.phone; $('#est-gst').checked = st.gst;
+  window.addEventListener('sww:registered', function (e) {
+    var pr = e.detail || {}; if (pr.name && !st.name) { st.name = pr.name; $('#est-name').value = pr.name; } if (pr.phone && !st.phone) { st.phone = pr.phone; $('#est-phone').value = pr.phone; }
+    if (pr.lang === 'kn' && st.lang !== 'kn' && !st.items.length) { st.lang = 'kn'; applyLang(); } save();
+  });
 
   /* ---------------- render parts ---------------- */
   function applyLang() {
@@ -230,7 +239,7 @@
   $('#est-clear').addEventListener('click', function () { st.items = []; st.qno = null; save(); renderList(); renderTotals(); clearMsgs(); });
 
   /* ---------------- quote data ---------------- */
-  function newQno() { var d = new Date(), p = function (n) { return (n < 10 ? '0' : '') + n; }; return 'SWQ-' + String(d.getFullYear()).slice(2) + p(d.getMonth() + 1) + p(d.getDate()) + '-' + Math.random().toString(36).slice(2, 5).toUpperCase(); }
+  function newQno() { var d = new Date(), p = function (n) { return (n < 10 ? '0' : '') + n; }; return 'SIQ-' + String(d.getFullYear()).slice(2) + p(d.getMonth() + 1) + p(d.getDate()) + '-' + Math.random().toString(36).slice(2, 5).toUpperCase(); }
   function fmtDate(d) { var p = function (n) { return (n < 10 ? '0' : '') + n; }; return p(d.getDate()) + '/' + p(d.getMonth() + 1) + '/' + d.getFullYear(); }
   function cleanPhone(v) { return String(v).replace(/[^\d]/g, '').replace(/^(91|0)(?=\d{10}$)/, ''); }
   function customer() {
@@ -251,17 +260,16 @@
     return st.items.map(function (it, i) { var p = price(it), ex = extrasText(it); return (i + 1) + '. ' + itemName(it) + ' | ' + sizeText(it) + ' | ' + num(p.areaT) + ' ' + t('sqft') + ' | ' + inr(p.amount) + (ex ? ' | + ' + ex : ''); });
   }
 
-  /* ---------------- lead e-mail (FormSubmit) ---------------- */
+  /* ---------------- lead capture (e-mail / Google Sheet via js/leads.js) ---------------- */
   var sentSig = {};
   function sendLead(q, channel) {
-    var to = String(CFG.email || '').trim(); if (!to) return;
+    if (!window.SWW_LEADS) return;
     var sig = channel + '|' + q.no + '|' + q.tt.total + '|' + q.cust.phone; if (sentSig[sig]) return; sentSig[sig] = 1;
-    var b = { _subject: 'Quote request - ' + q.cust.name + ' (' + inr(q.tt.total) + ')', _template: 'table', _captcha: 'false', _honey: '',
-      'Source': 'Price Estimator (' + channel + ')', 'Quote no.': q.no, 'Name': q.cust.name, 'Mobile': '+91 ' + q.cust.phone,
-      'Items': plainLines().join('\n'), 'Subtotal': inr(q.tt.sub), 'GST': st.gst ? inr(q.tt.gst) + ' (' + R.gstPercent + '%)' : 'not included',
-      'Approx. total': inr(q.tt.total), 'Range': inr(q.tt.lo) + ' - ' + inr(q.tt.hi), 'Customer language': q.lang === 'kn' ? 'Kannada' : 'English' };
-    if (R.sample) b['Note'] = 'SAMPLE RATES were active';
-    try { fetch('https://formsubmit.co/ajax/' + encodeURIComponent(to), { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(b) }).catch(function () {}); } catch (e) {}
+    window.SWW_LEADS.send('quotation', {
+      name: q.cust.name, phone: q.cust.phone, quoteNo: q.no, channel: channel, items: plainLines().join('\n'),
+      subtotal: q.tt.sub, gst: st.gst ? inr(q.tt.gst) + ' (' + R.gstPercent + '%)' : 'not included', total: q.tt.total, lo: q.tt.lo, hi: q.tt.hi,
+      cats: st.items.map(function (it) { return itemName(it); }).slice(0, 8), lang: q.lang, sample: !!R.sample
+    });
   }
 
   /* ---------------- PDF (canvas pages -> JPEG -> minimal PDF) ---------------- */
@@ -285,9 +293,9 @@
     x.fillStyle = '#ffffff'; x.fillRect(0, 0, W, H);
     // header
     x.fillStyle = '#1a110b'; x.fillRect(0, 0, W, 210); x.fillStyle = '#d9a24a'; x.fillRect(0, 210, W, 8);
-    x.fillStyle = '#f2c577'; x.font = '700 62px ' + SERIF; x.textBaseline = 'alphabetic'; x.fillText('Satish Wood Works', M, 100);
+    x.fillStyle = '#f2c577'; x.font = '700 62px ' + SERIF; x.textBaseline = 'alphabetic'; x.fillText('Satish Interior World', M, 100);
     x.fillStyle = '#d9cbb3'; x.font = '400 24px ' + EN_FONT;
-    x.fillText('#456 / #52, 1st Cross, Narayanaswamy Layout, Abbigere, Bengaluru 560090', M, 146);
+    x.fillText((CFG.address && CFG.address.full) || 'Bengaluru', M, 146);
     var contact = [ownerPhone.length === 10 ? '+91 ' + ownerPhone.slice(0, 5) + ' ' + ownerPhone.slice(5) : '', CFG.email || ''].filter(Boolean).join('   |   ');
     if (contact) x.fillText(contact, M, 182);
     x.textAlign = 'right'; x.fillStyle = '#f2c577'; x.font = '700 44px ' + ff(); x.fillText(t('q_title'), W - M, 100); x.textAlign = 'left';
@@ -326,7 +334,7 @@
     }
     // footer
     x.fillStyle = '#d9a24a'; x.fillRect(M, H - 110, W - 2 * M, 2); x.fillStyle = '#6e5a44'; x.font = '400 20px ' + ff();
-    x.fillText('Satish Wood Works • Abbigere, Bengaluru • ' + (R.sample ? t('q_sampleNote') : 'www'), M, H - 66);
+    x.fillText('Satish Interior World • Ganigarahalli, Bengaluru' + (R.sample ? ' • ' + t('q_sampleNote') : ''), M, H - 66);
     x.textAlign = 'right'; x.fillText(t('q_page') + ' ' + (pi + 1) + ' / ' + pc, W - M, H - 66); x.textAlign = 'left';
     return c;
   }
@@ -372,7 +380,7 @@
       return new Blob([makePdf(jpgs)], { type: 'application/pdf' });
     });
   }
-  function fileName(q) { return 'Satish-Wood-Works-Quote-' + q.no + '.pdf'; }
+  function fileName(q) { return 'Satish-Interior-World-Quote-' + q.no + '.pdf'; }
   function download(blob, name) { var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 800); }
   function busy(btn, on) { btn.disabled = !!on; btn.style.opacity = on ? '.6' : ''; }
 

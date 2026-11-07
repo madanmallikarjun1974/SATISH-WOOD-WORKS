@@ -1,0 +1,68 @@
+PRETTY VERSION: the same steps, with a copy button and a password box, are on the website at  /owner-guide
+(for example  yourwebsite.netlify.app/owner-guide ). Use that page — it is easier than this text file.
+
+SATISH INTERIOR WORLD — OWNER DASHBOARD SETUP  (one time, about 10 minutes)
+============================================================================
+
+WHAT YOU GET
+  * Every visitor who fills the entry form, every detailed enquiry and every quotation is saved in a
+    Google Sheet that belongs to satishinteriorworld@gmail.com.
+  * A private page — your-website/owner.html — protected by a password. It shows how many customers
+    registered, how many sent the detailed enquiry form, how many took ONLY a quotation, and a list
+    of every customer with their phone number (tap to call / WhatsApp). You can download it all as Excel.
+  * CUSTOMER REVIEWS: customers write a review (name, stars, comment) on the website. It lands in the
+    "Reviews" tab of the sheet as Pending and in the dashboard under "Customer reviews". Nothing is shown to
+    the public until you press Approve (or type Approved in the Status column of the sheet). Approved
+    reviews then appear on the website with the customer's name. Phone numbers are never shown publicly.
+  * Every lead ALSO still arrives as an e-mail at satishinteriorworld@gmail.com (subject starts with
+    [NEW VISITOR], [DETAILED ENQUIRY], [QUOTATION] or [NEW REVIEW]).
+
+STEP 1 — Create the Google Sheet
+  1. Sign in to Google with satishinteriorworld@gmail.com and open https://sheets.google.com
+  2. Click "Blank spreadsheet". Name it:  Satish Interior World - Leads
+
+STEP 2 — Paste the script
+  1. In that sheet click  Extensions > Apps Script.
+  2. Delete the sample code, then paste ALL the text from the file  owner-setup/Code.gs
+  3. On the first code line, replace PUT-YOUR-PASSWORD-HERE with the owner password you want
+     (use the password you chose — a longer one is safer; never put it in the website files). Keep the quote marks.
+  4. Click the Save (disk) icon.
+
+STEP 3 — Publish it as a web app
+  1. Click  Deploy > New deployment.  Click the gear icon and choose "Web app".
+  2. Description: leads.   Execute as: Me.   Who has access: Anyone.
+  3. Click Deploy. Google asks for permission: Authorize access > choose the account >
+     "Advanced" > "Go to ... (unsafe)" > Allow.   (It is your own script — this warning is normal.)
+  4. Copy the "Web app URL" (it ends with /exec).
+
+STEP 4 — Connect the website
+  1. Open js/config.js and paste the URL between the quotes:
+        sheetUrl: 'https://script.google.com/macros/s/XXXXXXXX/exec',
+  2. Upload the website to Netlify again (same way as before).
+
+STEP 5 — Try it
+  1. Open your live website in a new private/incognito window and fill the entry form.
+  2. Open  your-website/owner.html , type the password. The visitor should be listed.
+  3. FIRST TIME ONLY: the e-mail service (FormSubmit) sends ONE "activate" e-mail to
+     satishinteriorworld@gmail.com after the first form is submitted. Open it and click Confirm.
+     Until you do, e-mails do not arrive (the Google Sheet works regardless).
+
+UPDATING THE SCRIPT LATER (e.g. after a new version of Code.gs)
+  Paste the new Code.gs (keep your password line) > Save > Deploy > Manage deployments > pencil icon >
+  Version: "New version" > Deploy.  Same Web app URL keeps working.
+
+CHANGING THE PASSWORD LATER
+  Apps Script > change the password text > Save > Deploy > Manage deployments > pencil icon >
+  Version: "New version" > Deploy.  (The website itself does not need to change.)
+
+GOOD TO KNOW
+  * The owner page is  yourwebsite.netlify.app/owner  — on the SAME Netlify site as the public website, so there is
+    no extra cost. It is NOT linked from any public page, is hidden from Google, and asks for the password. Bookmark it.
+    (yourwebsite/owner.html opens the same page.)
+  * The password is checked by Google's server, not by the website, so it cannot be read from the page source.
+  * Leads are stored forever in the sheet. You can also sort / filter / share the sheet itself.
+  * Before the Google Sheet is connected, owner.html runs in DEMO mode: any password opens it, and it only shows
+    made-up sample customers or forms filled on that same device. Nothing private is in it. After you connect the
+    Sheet (Step 4) the password is checked by Google and only the real password works.
+  * Running the site on your own PC with start-server.bat also works: leads are saved in data\leads.xlsx and the
+    owner password for that local copy is in data\owner-password.txt (or set the OWNER_PASSWORD variable).

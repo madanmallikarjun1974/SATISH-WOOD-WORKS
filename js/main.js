@@ -24,6 +24,12 @@
     parts.forEach(function (p) { o[p.type] = p.value; });
     return { day: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(o.weekday), min: (+o.hour % 24) * 60 + +o.minute };
   }
+  function hoursLine() {
+    var open = [], closed = [], d; for (d = 1; d <= 7; d++) { var k = d % 7; (CFG.hours[k] ? open : closed).push(k); }
+    if (!open.length) return 'Closed';
+    var h = CFG.hours[open[0]], rng = DAYS[open[0]] + ' – ' + DAYS[open[open.length - 1]] + ': ' + t12(h[0]) + ' – ' + t12(h[1]);
+    return rng + (closed.length ? ' · ' + closed.map(function (k) { return DAYS[k]; }).join(', ') + ': Closed' : '');
+  }
   function openStatus(d) {
     var n = nowIST(d), h = CFG.hours[n.day];
     if (h && n.min >= mins(h[0]) && n.min < mins(h[1])) {
@@ -40,7 +46,7 @@
   function paintStatus() {
     var s = openStatus();
     $$('[data-status]').forEach(function (el) { el.setAttribute('data-state', s.state); $('.st-label', el).textContent = s.label; });
-    var hl = $('[data-hours-line]'); if (hl) hl.textContent = 'Monday – Saturday: 9:00 AM – 7:30 PM · Sunday: Closed';
+    var hl = $('[data-hours-line]'); if (hl) hl.textContent = hoursLine();
     var n = nowIST();
     $$('#hours-table tr').forEach(function (tr) { tr.classList.toggle('today', +tr.dataset.d === n.day); });
   }
@@ -53,11 +59,19 @@
 
   /* ============ contact bits ============ */
   var phone = String(CFG.phone || '').replace(/\D/g, '').replace(/^91(?=\d{10}$)/, '');
+  var addrEls = $$('[data-addr]'); addrEls.forEach(function (el) { el.innerHTML = esc(CFG.address.line1) + '<br>' + esc(CFG.address.line2); });
+  var emailAddr = String(CFG.email || '').trim();
+  if (emailAddr) {
+    $$('[data-email-li]').forEach(function (el) { el.hidden = false; });
+    $$('[data-email-link],[data-email-link2]').forEach(function (a) { a.href = 'mailto:' + emailAddr; a.textContent = emailAddr; a.hidden = false; });
+  }
   if (phone.length === 10) {
     var pretty = '+91 ' + phone.slice(0, 5) + ' ' + phone.slice(5);
-    $$('[data-phone-btn]').forEach(function (a) { a.href = 'tel:+91' + phone; a.hidden = false; });
+    $$('[data-phone-btn]').forEach(function (a) { a.href = 'tel:+91' + phone; a.hidden = false; if (a.classList.contains('hdr-call')) a.textContent = pretty; });
+    $$('[data-phone-link2]').forEach(function (a) { a.href = 'tel:+91' + phone; a.textContent = pretty; a.hidden = false; });
+    $$('[data-foot-contact]').forEach(function (el) { el.innerHTML = '<a href="tel:+91' + phone + '">' + pretty + '</a>' + (emailAddr ? '<br><a href="mailto:' + esc(emailAddr) + '">' + esc(emailAddr) + '</a>' : ''); });
     var li = $('[data-phone-li]'); if (li) { li.hidden = false; var l = $('[data-phone-link]'); l.href = 'tel:+91' + phone; l.textContent = pretty; }
-    var wa = $('[data-wa]'); if (wa) { wa.href = 'https://wa.me/91' + phone + '?text=' + encodeURIComponent('Hello Satish Wood Works, I would like to enquire about interiors / furniture.'); wa.hidden = false; }
+    var wa = $('[data-wa]'); if (wa) { wa.href = 'https://wa.me/91' + phone + '?text=' + encodeURIComponent('Hello Satish Interior World, I would like to enquire about interiors / furniture / materials.'); wa.hidden = false; }
   }
   $('.map iframe').src = CFG.address.embed;
   $('#dir-btn').href = CFG.address.mapsLink;
@@ -212,15 +226,6 @@
   lb.addEventListener('touchend', function (e) { if (tx == null || lbWrap.classList.contains('zoom')) return; var dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 60) stepLB(dx < 0 ? 1 : -1); tx = null; });
   $('#lb-cta').addEventListener('click', function (e) { var b = e.currentTarget; closeLB(); prefill(b.dataset.design, catInterest[b.dataset.cat]); });
 
-  /* ============ reviews ============ */
-  (function () {
-    var T = CFG.testimonials || [], rows = $('#rv-rows'); if (!T.length) { $('#reviews').hidden = true; return; }
-    function card(t) { return '<article class="rv">' + (t.sample && CFG.showSampleBadge ? '<span class="smp">Sample</span>' : '') + '<div class="stars" aria-label="' + t.stars + ' out of 5 stars">' + '★'.repeat(t.stars || 5) + '</div><p>“' + esc(t.text) + '”</p><footer><b>' + esc(t.name) + '</b><span>' + esc(t.place || '') + '</span></footer></article>'; }
-    var half = Math.ceil(T.length / 2), a = T.slice(0, half), b = T.slice(half).length ? T.slice(half) : T;
-    function row(list, cls) { var h = list.map(card).join(''); return '<div class="rv-row ' + cls + '">' + h + h + '</div>'; }
-    rows.innerHTML = row(a, '') + row(b, 'rev');
-  })();
-
   /* ============ enquiry form ============ */
   var form = $('#enq-form'), err = $('#form-err'), grp = $('.enquire-grid'), thanks = $('#thanks'), design = $('#f-design'), liked = $('#liked');
   function prefill(title, interest) {
@@ -229,6 +234,7 @@
     resetSent(); $('#enquire').scrollIntoView({ behavior: 'smooth' });
     setTimeout(function () { var n = $('input[name=name]', form); if (n && !n.value) n.focus({ preventScroll: true }); }, 700);
   }
+  window.SWW_prefill = prefill;
   $('#liked-x').addEventListener('click', function () { design.value = ''; liked.hidden = true; });
   $$('[data-enquire]').forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); prefill(null, a.dataset.interest || null); if (menu) menu.hidden = true; }); });
 
@@ -250,52 +256,26 @@
   $$('input', form).forEach(function (i) { i.addEventListener('input', function () { i.classList.remove('bad'); err.hidden = true; }); });
   $('#interests').addEventListener('change', function () { $('#interests').closest('.grp').classList.remove('bad'); });
 
-  var QKEY = 'sww_queue_v1';
-  function queue(get, set) { try { if (set) localStorage.setItem(QKEY, JSON.stringify(set)); else return JSON.parse(localStorage.getItem(QKEY) || '[]'); } catch (e) { return []; } }
-  function post(p) {
-    return fetch('/api/enquiry', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(p) }).then(function (r) {
-      return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, body: j }; });
-    });
-  }
-  function sendEmail(p) {
-    var to = String(CFG.email || '').trim(); if (!to) return Promise.resolve(false);
-    var b = { _subject: 'New enquiry - ' + p.name + (p.interests && p.interests.length ? ' (' + p.interests.join(', ') + ')' : ''), _template: 'table', _captcha: 'false', _honey: '' };
-    function add(k, v) { if (v) b[k] = v; }
-    add('Reference', p.clientRef); add('Name', p.name); add('Mobile', '+91 ' + p.phone); add('Area / location', p.area); add('Property', p.propertyType);
-    add('Looking for', (p.interests || []).join(', ')); add('Style', p.style); add('Timeline', p.timeline); add('Best time to call', p.callTime);
-    add('Design liked', p.design); add('Details', p.details); add('Received', new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST');
-    if (p.email) b.email = p.email;
-    return fetch('https://formsubmit.co/ajax/' + encodeURIComponent(to), { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(b) })
-      .then(function (r) { return r.json(); }).then(function (j) { return !!j && (j.success === true || j.success === 'true'); }).catch(function () { return false; });
-  }
-  /* deliver = e-mail to the shop + (when running start-server.bat) the Excel file. Success if either worked. */
+  /* delivery (e-mail + Google Sheet + local server, with retry queue) is handled by js/leads.js */
   function deliver(p) {
-    var srv = location.protocol === 'file:' ? Promise.resolve({ ok: false }) : post(p).then(function (r) {
-      return { ok: !!(r.body && r.body.ok), ref: r.body && r.body.ref, invalid: r.status === 422 || r.status === 429, error: r.body && r.body.error };
-    }).catch(function () { return { ok: false }; });
-    return Promise.all([srv, sendEmail(p)]).then(function (a) {
-      if (a[0].invalid && !a[1]) return { invalid: true, error: a[0].error };
-      return { ok: a[0].ok || a[1], ref: a[0].ref || p.clientRef };
-    });
+    return window.SWW_LEADS.send('enquiry', p).then(function (r) { return { ok: !!r.ok, invalid: !!r.invalid, error: r.error, ref: p.clientRef }; });
   }
-  function flush() {
-    var q = queue(); if (!q.length) return;
-    var left = []; var chain = Promise.resolve();
-    q.forEach(function (p) { chain = chain.then(function () { return deliver(p).then(function (r) { if (!r.ok && !r.invalid) left.push(p); }); }).catch(function () { left.push(p); }); });
-    chain.then(function () { queue(null, left); });
-  }
-  window.addEventListener('online', flush); flush();
 
   function downloadXlsx(rec) {
     var bytes = XlsxLite.build([SWW_SCHEMA.sheet([rec])]);
     var blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Satish-Wood-Works-enquiry.xlsx'; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Satish-Interior-World-enquiry.xlsx'; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
   }
+  function fillFromProfile() {
+    var pr = window.SWW_LEADS && window.SWW_LEADS.profile(); if (!pr) return;
+    [['name', pr.name], ['phone', pr.phone], ['email', pr.email], ['area', pr.area]].forEach(function (kv) { var el = $('[name=' + kv[0] + ']', form); if (el && !el.value && kv[1]) el.value = kv[1]; });
+  }
+  fillFromProfile(); window.addEventListener('sww:registered', fillFromProfile);
   var lastRec = null;
   var ownerPhone = String(CFG.phone || '').replace(/\D/g, '').replace(/^91(?=\d{10}$)/, '');
   var WA_MODE = ownerPhone.length === 10;
   function waText(o) {
-    var L = ['*New enquiry - Satish Wood Works website*', ''];
+    var L = ['*New enquiry - Satish Interior World website*', ''];
     function add(k, v) { if (v) L.push('*' + k + ':* ' + v); }
     add('Name', o.name); add('Mobile', '+91 ' + cleanPhone(o.phone)); add('Email', o.email); add('Area / location', o.area);
     add('Property', o.propertyType); add('Looking for', o.interests.join(', ')); add('Style', o.style); add('Timeline', o.timeline);
@@ -309,10 +289,10 @@
     var o = collect(), bad = validate(o);
     if (bad.length) { err.textContent = 'Please check ' + bad.join(', ') + '.'; err.hidden = false; var f = $('.bad', form); if (f) f.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
     var btn = $('#f-submit'); btn.disabled = true; $('span', btn).textContent = 'Sending…';
-    var digits = cleanPhone(o.phone), payload = Object.assign({}, o, { phone: digits });
+    var digits = cleanPhone(o.phone), payload = Object.assign({}, o, { phone: digits }); delete payload.website;
     var waLink = WA_MODE ? waUrl(o) : '';
     var done = function (ref, offline) {
-      lastRec = { ref: ref, receivedAt: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST', name: o.name, phone: '+91 ' + digits.slice(0, 5) + ' ' + digits.slice(5), email: o.email, area: o.area, propertyType: o.propertyType, interests: o.interests.join(', '), style: o.style, timeline: o.timeline, callTime: o.callTime, details: o.details, design: o.design, status: 'New' };
+      lastRec = { type: 'enquiry', ts: new Date().toISOString(), id: ref, clientRef: ref, ref: ref, time: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST', receivedAt: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST', name: o.name, phone: digits, email: o.email, area: o.area, propertyType: o.propertyType, interests: o.interests.join(', '), style: o.style, timeline: o.timeline, callTime: o.callTime, details: o.details, design: o.design, status: 'New' };
       $('#thanks-name').textContent = o.name ? ', ' + o.name.split(' ')[0] : '';
       $('#thanks-ref').textContent = ref; $('#thanks-phone').textContent = lastRec.phone;
       $('#thanks-note').textContent = offline ? 'We couldn’t send it just now. Your enquiry is saved on this device and will be sent automatically as soon as you are back online.' : (openStatus().state === 'closed' ? 'The showroom is closed right now — we’ll get back to you when we open.' : 'Our team will call you shortly.');
@@ -322,13 +302,13 @@
       grp.classList.add('sent'); thanks.hidden = false; thanks.scrollIntoView({ block: 'center', behavior: 'smooth' });
       form.reset(); design.value = ''; liked.hidden = true; btn.disabled = false; $('span', btn).textContent = 'Send Enquiry';
     };
-    payload.clientRef = 'SWW-' + Date.now().toString(36).toUpperCase().slice(-6);
+    payload.clientRef = 'SIW-' + Date.now().toString(36).toUpperCase().slice(-6); payload.id = payload.clientRef;
     if (o.website) return done(payload.clientRef, false); /* honeypot: bots get a fake success */
     deliver(payload).then(function (r) {
       if (r.ok) return done(r.ref, false);
       if (r.invalid) { err.textContent = r.error || 'Please check the form and try again.'; err.hidden = false; btn.disabled = false; $('span', btn).textContent = 'Send Enquiry'; return; }
-      var q = queue(); q.push(payload); queue(null, q); done('PENDING', true);
-    }).catch(function () { var q = queue(); q.push(payload); queue(null, q); done('PENDING', true); });
+      done(r.ref || 'PENDING', true);
+    }).catch(function () { done('PENDING', true); });
   });
   $('#thanks-xlsx').addEventListener('click', function () { if (lastRec) downloadXlsx(lastRec); });
   function resetSent() { grp.classList.remove('sent'); thanks.hidden = true; }

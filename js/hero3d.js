@@ -364,6 +364,7 @@
 
   function frame(now) {
     if (!visible || !running) return;
+    if (document.documentElement.classList.contains('gate-on')) { lastT = 0; setTimeout(function () { requestAnimationFrame(frame); }, 250); return; }   /* the website is hidden behind the entry form — don't draw it yet */
     var dt = lastT ? Math.min(.05, (now - lastT) / 1000) : .016; lastT = now;
     var k = REDUCED ? 1 : 1 - Math.pow(.0009, dt);              // smoothing for buttery scroll
     prog_ += (progTarget - prog_) * k;

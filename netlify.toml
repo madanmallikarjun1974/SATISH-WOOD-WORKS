@@ -1,0 +1,65 @@
+# Netlify settings — the website is plain static files, no build step.
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/owner-setup/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/OWNER-SETUP.txt"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/server.js"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/package.json"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/README.txt"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/start-server.bat"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/owner"
+  to = "/owner.html"
+  status = 200
+[[redirects]]
+  from = "/owner/"
+  to = "/owner.html"
+  status = 200
+
+[[redirects]]
+  from = "/owner-guide"
+  to = "/owner-guide.html"
+  status = 200
+
+[[headers]]
+  for = "/owner-guide*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/owner"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"
+
+[[headers]]
+  for = "/owner.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"
