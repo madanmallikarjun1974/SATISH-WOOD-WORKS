@@ -30,7 +30,7 @@ const MIME = {
   '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.txt': 'text/plain; charset=utf-8', '.woff2': 'font/woff2'
 };
 // never serve these to the public
-const BLOCKED = [/^\/data(\/|$)/, /^\/owner-setup(\/|$)/, /^\/OWNER-SETUP/i, /^\/_redirects$/, /^\/netlify\.toml$/, /^\/server\.js$/, /^\/package\.json$/, /^\/start-server/, /^\/README/i, /^\/\./];
+const BLOCKED = [/^\/data(\/|$)/, /^\/_redirects$/, /^\/netlify\.toml$/, /^\/server\.js$/, /^\/package\.json$/, /^\/start-server/, /^\/README/i, /^\/\./];
 
 fs.mkdirSync(DATA_DIR, { recursive: true });
 
@@ -117,7 +117,7 @@ function handlePublicReviews(req, res) {
 function serveStatic(req, res) {
   let p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
   if (p.endsWith('/') && p.length > 1) p = p.slice(0, -1);
-  if (p === '/owner' || p === '/owner-guide') p += '.html';
+  if (p === '/owner') p += '.html';
   if (p === '/') p = '/index.html';
   if (BLOCKED.some(r => r.test(p))) { res.writeHead(404); return res.end('Not found'); }
   const file = path.normalize(path.join(ROOT, p));

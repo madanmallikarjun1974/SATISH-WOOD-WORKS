@@ -9,16 +9,16 @@ WHAT IS IN THIS WEBSITE
   (Edit the words in js\materials.js.)
 - Instant Quote estimator (English / Kannada) with PDF quote + WhatsApp button (rates in js\rates.js).
 - Detailed enquiry form, live open/closed status, map, call + WhatsApp buttons.
-- Owner dashboard: owner.html (password protected) - see OWNER-SETUP.txt.
+- Owner dashboard: /owner (password protected, separate link on the same website).
 
 WHERE EVERY LEAD GOES
   1. E-mail to satishinteriorworld@gmail.com  - [NEW VISITOR] / [DETAILED ENQUIRY] / [QUOTATION]
-  2. Google Sheet + owner.html dashboard       - after the one-time setup in OWNER-SETUP.txt
+  2. Google Sheet + owner.html dashboard       - connected through sheetUrl in js\config.js
   3. data\leads.xlsx                           - only when you run start-server.bat on your own PC
 
 EDIT YOUR DETAILS  (js\config.js)
 - phone / email / address / hours / map link
-- sheetUrl : the Google Apps Script link for the owner dashboard (see OWNER-SETUP.txt)
+- sheetUrl : the Google Apps Script link for the owner dashboard (the Google Apps Script web app URL)
 - reviews      : customers write reviews on the site; you approve them in owner.html (Customer reviews). You may also add real ones by hand in config.js (reviews: [...])
 - previewMode : keep false on the live website (true = demo mode, nothing is sent)
 

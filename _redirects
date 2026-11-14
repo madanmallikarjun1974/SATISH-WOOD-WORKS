@@ -1,6 +1,4 @@
 # Keep the developer / setup files off the public website
-/owner-setup/*     /404.html   404!
-/OWNER-SETUP.txt   /404.html   404!
 /README.txt        /404.html   404!
 /server.js         /404.html   404!
 /package.json      /404.html   404!
@@ -10,5 +8,3 @@
 # The owner page lives on the same website at  /owner  (not linked anywhere on the public pages; password protected)
 /owner   /owner.html   200
 /owner/  /owner.html   200
-/owner-guide   /owner-guide.html   200
-/owner-guide/  /owner-guide.html   200

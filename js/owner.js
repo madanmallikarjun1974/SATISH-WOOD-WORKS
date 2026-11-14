@@ -2,7 +2,7 @@
 (function () {
   'use strict';
   var CFG = window.SWW || {}, L = window.SWW_LEADS, SC = window.SWW_SCHEMA;
-  /* The real owner password is NEVER stored in the website files — Google checks it (see OWNER-SETUP.txt).
+  /* The real owner password is NEVER stored in the website files — Google checks it.
      Until the Google Sheet is connected there is nothing private to protect (only sample data / this device's own forms),
      so this demo mode accepts any non-empty password. */
   var DEMO_PW = '__demo__';
@@ -193,7 +193,7 @@
     if (st.mode === 'sheet') { em.textContent = 'Connected to your Google Sheet'; em.className = 'ok'; note.innerHTML = 'Every form is also in your Google Sheet (tabs <code>Leads</code> and <code>Reviews</code>) — open it in Google Sheets any time. This page auto-refreshes every minute.'; }
     else if (st.mode === 'server') { em.textContent = 'Connected to the local server'; em.className = 'ok'; note.innerHTML = 'Saved in <code>data/leads.xlsx</code> next to the website files.'; }
     else { em.textContent = st.sample ? 'Showing sample data' : 'Preview · not connected to Google yet'; em.className = '';
-      note.innerHTML = st.sample ? 'These are made-up customers, only to show how the dashboard looks. Nothing here is real.' : 'Right now (preview) forms are only kept in <u>this browser</u>, so you can test the whole flow: fill the website forms, then open this page. On the live site, after the one-time Google Sheet setup (<code>OWNER-SETUP.txt</code>), every form from every customer lands here and in your Google Sheet.'; }
+      note.innerHTML = st.sample ? 'These are made-up customers, only to show how the dashboard looks. Nothing here is real.' : 'Right now (preview) forms are only kept in <u>this browser</u>, so you can test the whole flow: fill the website forms, then open this page. On the live site, every form from every customer lands here and in your Google Sheet.'; }
   }
 
   /* ---------- drawer ---------- */
@@ -217,7 +217,7 @@
   /* ---------- load + login ---------- */
   function banner() {
     var b = $('#banner'), m = '';
-    if (st.mode === 'local') m = (st.sample ? '<b>SAMPLE DATA</b> — made-up customers, only to show how the dashboard looks. <button type="button" id="b-sample2" class="lnk">Show my real data</button><br>Connect the Google Sheet (see OWNER-SETUP.txt) to see your real leads from every phone.' : '<b>Not connected yet</b> — showing only forms filled on <u>this device</u>. Connect the Google Sheet (see OWNER-SETUP.txt) to see every customer from every phone. <button type="button" id="b-sample2" class="lnk">Show sample data</button>');
+    if (st.mode === 'local') m = (st.sample ? '<b>SAMPLE DATA</b> — made-up customers, only to show how the dashboard looks. <button type="button" id="b-sample2" class="lnk">Show my real data</button><br>Once the website is connected to the Google Sheet, your real leads from every phone show here.' : '<b>Not connected yet</b> — showing only forms filled on <u>this device</u>. Once the website is connected to the Google Sheet, every customer from every phone shows here. <button type="button" id="b-sample2" class="lnk">Show sample data</button>');
     else if (st.mode === 'server') m = '<b>Connected</b> — local server. Leads are also saved in <code>data/leads.xlsx</code>.';
     b.innerHTML = m; b.className = 'obanner ' + (st.mode === 'local' ? 'warn' : 'ok'); b.hidden = !m;
   }
@@ -260,7 +260,7 @@
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('#drawer').hidden) closeDrawer(); });
 
   detect().then(function () {
-    $('#login-mode').textContent = st.mode === 'sheet' ? 'Connected to your Google Sheet.' : st.mode === 'server' ? 'Connected to the local server.' : 'Demo mode: the Google Sheet is not connected yet, so any password opens sample / this-device data only (see OWNER-SETUP.txt).';
+    $('#login-mode').textContent = st.mode === 'sheet' ? 'Connected to your Google Sheet.' : st.mode === 'server' ? 'Connected to the local server.' : 'Demo mode: the Google Sheet is not connected yet, so any password opens sample / this-device data only.';
     var saved = ''; try { saved = sessionStorage.getItem(SK) || ''; } catch (e) {}
     if (saved) load(saved).catch(function () { try { sessionStorage.removeItem(SK); } catch (e) {} });
   });

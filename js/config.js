@@ -28,7 +28,7 @@ window.SWW = {
   },
 
   /* ---------- Owner dashboard (owner.html) ----------
-     Paste the Google Apps Script "Web app" URL here after following OWNER-SETUP.txt.
+     Google Apps Script "Web app" URL (the owner dashboard and the lead store).
      Until then, leads still arrive by e-mail; the dashboard needs this link to list them all. */
   sheetUrl: '',
 
